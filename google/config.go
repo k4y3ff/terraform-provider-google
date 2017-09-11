@@ -22,6 +22,7 @@ import (
 	computeBeta "google.golang.org/api/compute/v0.beta"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/container/v1"
+	"google.golang.org/api/dataflow/v1b3"
 	"google.golang.org/api/dns/v1"
 	"google.golang.org/api/iam/v1"
 	"google.golang.org/api/pubsub/v1"
@@ -44,6 +45,7 @@ type Config struct {
 	clientCompute         *compute.Service
 	clientComputeBeta     *computeBeta.Service
 	clientContainer       *container.Service
+	clientDataflow        *dataflow.Service
 	clientDns             *dns.Service
 	clientPubsub          *pubsub.Service
 	clientResourceManager *cloudresourcemanager.Service
@@ -143,6 +145,13 @@ func (c *Config) loadAndValidate() error {
 		return err
 	}
 	c.clientContainer.UserAgent = userAgent
+
+	log.Printf("[INFO] Instantiating Google Cloud Dataflow client...")
+	c.clientDataflow, err = dataflow.New(client)
+	if err != nil {
+		return err
+	}
+	c.clientDataflow.UserAgent = userAgent
 
 	log.Printf("[INFO] Instantiating Google Cloud DNS client...")
 	c.clientDns, err = dns.New(client)
